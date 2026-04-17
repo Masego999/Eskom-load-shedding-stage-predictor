@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eskom Load Shedding Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="ls-root">
+
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1>Eskom Load Shedding Dashboard</h1>
+        <p class="subtitle">Stage predictor &amp; schedule tracker — BSc CS project demo</p>
+      </div>
+      <div id="current-badge" class="stage-badge"></div>
+    </div>
+
+    <!-- Key Metrics -->
+    <p class="section-label">Current conditions</p>
+    <div class="grid-4">
+      <div class="metric-card">
+        <p class="metric-lbl">Active stage</p>
+        <p class="metric-val" id="m-stage">—</p>
+        <p class="metric-sub" id="m-stage-sub"></p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-lbl">Hours off today</p>
+        <p class="metric-val" id="m-hours">—</p>
+        <p class="metric-sub">hrs scheduled</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-lbl">Generation deficit</p>
+        <p class="metric-val" id="m-deficit">—</p>
+        <p class="metric-sub">MW approx</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-lbl">Prediction confidence</p>
+        <p class="metric-val" id="m-conf">—</p>
+        <p class="metric-sub">model accuracy</p>
+      </div>
+    </div>
+
+    <!-- Stage Distribution + Timeline -->
+    <div class="grid-2">
+      <div class="card">
+        <p class="section-label">30-day stage distribution</p>
+        <div id="dist-list"></div>
+      </div>
+      <div class="card">
+        <p class="section-label">Last 14 days — stage history</p>
+        <div class="timeline-row" id="timeline"></div>
+        <div class="tl-labels" id="tl-labels"></div>
+      </div>
+    </div>
+
+    <!-- Predictor -->
+    <div class="card predictor-card">
+      <p class="section-label">Stage predictor — weighted regression model</p>
+
+      <div class="slider-row">
+        <label for="sl-planned">Planned outage (MW)</label>
+        <input type="range" id="sl-planned" min="0" max="6000" step="100" value="3200" />
+        <span class="slider-val" id="sv-planned">3200</span>
+      </div>
+      <div class="slider-row">
+        <label for="sl-unplanned">Unplanned outage (MW)</label>
+        <input type="range" id="sl-unplanned" min="0" max="8000" step="100" value="4500" />
+        <span class="slider-val" id="sv-unplanned">4500</span>
+      </div>
+      <div class="slider-row">
+        <label for="sl-ocgt">OCGT usage (%)</label>
+        <input type="range" id="sl-ocgt" min="0" max="100" step="1" value="40" />
+        <span class="slider-val" id="sv-ocgt">40</span>
+      </div>
+      <div class="slider-row">
+        <label for="sl-reserve">Reserve margin (MW)</label>
+        <input type="range" id="sl-reserve" min="0" max="4000" step="100" value="1200" />
+        <span class="slider-val" id="sv-reserve">1200</span>
+      </div>
+
+      <button class="predict-btn" id="predict-btn">Run prediction model</button>
+      <div id="pred-result" class="pred-result hidden"></div>
+    </div>
+
+    <!-- ERF Schedule -->
+    <div class="card">
+      <p class="section-label">Estimated restoration schedule — Area 7 (demo)</p>
+      <p class="card-note">Based on current stage. Select your area in a full build.</p>
+      <div class="erf-grid" id="erf-grid"></div>
+    </div>
+
+    <!-- Math note -->
+    <div class="math-note">
+      <strong>Prediction model:</strong> Uses a weighted linear combination —
+      Stage ≈ (0.35 × unplanned/1000) + (0.20 × planned/1000) + (0.25 × OCGT%) − (0.20 × reserve/1000),
+      clamped to [0, 8]. Inspired by Eskom's published operational metrics. In a full build,
+      this would be trained on real historical data using least-squares regression (BSc Math topic).
+    </div>
+
+  </main>
+
+  <script src="data.js"></script>
+  <script src="predictor.js"></script>
+  <script src="ui.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
